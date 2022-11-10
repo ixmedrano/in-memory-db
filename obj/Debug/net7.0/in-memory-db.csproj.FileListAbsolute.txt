@@ -1,0 +1,15 @@
+F:\Storage\in-memory-db\bin\Debug\net7.0\in-memory-db.exe
+F:\Storage\in-memory-db\bin\Debug\net7.0\in-memory-db.deps.json
+F:\Storage\in-memory-db\bin\Debug\net7.0\in-memory-db.runtimeconfig.json
+F:\Storage\in-memory-db\bin\Debug\net7.0\in-memory-db.dll
+F:\Storage\in-memory-db\bin\Debug\net7.0\in-memory-db.pdb
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.csproj.AssemblyReference.cache
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.GeneratedMSBuildEditorConfig.editorconfig
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.AssemblyInfoInputs.cache
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.AssemblyInfo.cs
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.csproj.CoreCompileInputs.cache
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.dll
+F:\Storage\in-memory-db\obj\Debug\net7.0\refint\in-memory-db.dll
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.pdb
+F:\Storage\in-memory-db\obj\Debug\net7.0\in-memory-db.genruntimeconfig.cache
+F:\Storage\in-memory-db\obj\Debug\net7.0\ref\in-memory-db.dll

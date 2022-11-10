@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "in-memory-db/1.0.0": {
+        "runtime": {
+          "in-memory-db.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "in-memory-db/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
