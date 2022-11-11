@@ -2,11 +2,11 @@ namespace DevotedDatabase
 {
     public class Row
     {
-        public Guid RowId {get;set;}
-        public string Column {get;set;}
+        public Guid  RowId {get;set;}
+        public string  Column {get;set;}
         public string ? Value {get;set;}
-        public DateTime DateCreated {get;set;}
-        public DateTime DateUpdated {get;set;}
+        public DateTime  DateCreated {get;set;}
+        public DateTime  DateUpdated {get;set;}
     }
     public class Table
     {
