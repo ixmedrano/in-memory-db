@@ -13,9 +13,14 @@ namespace DevotedDatabase
             
             Console.WriteLine("File Path: {0}", incomingFilePath);
             Database inMemoryDB = new Database();
+            inMemoryDB.DatabaseName = "DevotedData";
+            inMemoryDB.Table = new List<Table>();
+
             var lines = File.ReadLines(incomingFilePath);
+            int lineIndex = 1;
             foreach (string line in lines)
             {
+                lineIndex ++;
                 Console.WriteLine(line);
                 string commandType = line.Split(":")[0];
                 
@@ -24,7 +29,7 @@ namespace DevotedDatabase
                     case "SET":
                     string setCommandName = line.Split(":")[1];
                     string setCommandValue = line.Split(":")[2];
-                    Setter setter = new Setter(inMemoryDB,setCommandName,setCommandValue);
+                    Setter setter = new Setter(inMemoryDB,setCommandName,setCommandValue, lineIndex);
                     break;
                     case "GET":
                     string getCommandName = line.Split(":")[1];
