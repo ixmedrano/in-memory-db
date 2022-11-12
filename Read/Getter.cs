@@ -4,7 +4,7 @@ namespace DevotedDatabase
     public class Getter
     {
 
-        public Getter(Database inMemoryDB, string column, int lineIndex, Table table)
+        public Getter(Database inMemoryDB, string column, Table table)
         {   
             if (table.Row == null || table.Row.Find(i => i.Column == column) == null)
             {

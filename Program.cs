@@ -8,95 +8,104 @@ namespace DevotedDatabase
         static void Main(string[] args)
         {
             Console.WriteLine("Database Starting");
-            // TODO convert to STDIN input
-            string incomingFilePath = @"F:\Storage\TestingFiles\incoming\sample_input.txt";
             // Variables
             string databaseName = "DevotedDataBase";
             string tableName = "DevotedDataTable";
             string tempTableName = String.Concat(tableName,"Temporary");
             string delimiter = " ";
             bool transactIndicator = false;
+            bool activeIndicator = true;
             // Instantiate Database Object
             Database inMemoryDB = new Instantiator(databaseName, tableName).CreateDatabase();
-            
-            var lines = File.ReadLines(incomingFilePath);
-            int lineIndex = 1;
-            foreach (string line in lines)
-            {             
-                // Locate tables
-                Table livetable = inMemoryDB.Table.Find(i => i.TableName == tableName);
-                Table tempTable = inMemoryDB.Table.Find(i => i.TableName == tempTableName);   
-                lineIndex ++;
-                Console.WriteLine(line);
-                string commandType = line.Split(" ")[0];
-                // Update indicator if transaction has started
-                if (commandType == "BEGIN")
+            Console.WriteLine("Enter a command:");
+            while (activeIndicator)
+            {
+                string line = Console.ReadLine();
+                string cleanedLine = line.ToUpper();
+                if (cleanedLine.Split(" ")[0] == "END")
                 {
-                    transactIndicator = true;
-                    continue;
+                    Console.WriteLine("Exiting Database");
+                    activeIndicator = false;
+                    break;
                 }
-                // For roll back command empty object and instantiate a new object
-                if (commandType == "ROLLBACK")
-                {
-                    tempTable.Row.Clear();
-                    continue;
-                }
-                if (commandType == "COMMIT")
-                {
-                    MergeTables(inMemoryDB, tempTable, livetable, lineIndex);
-                    tempTable.Row.Clear();
-                    transactIndicator = false;
-                    continue;
-
-                }
-                // If its not a transaction use live table for updates and gets
-                if (!transactIndicator)
-                {
-                    string commandName = line.Split(delimiter)[1];
-                    Action(commandType, line, delimiter, inMemoryDB, commandName, lineIndex, livetable);
-                    continue;
-                }
-                // If its a transaction use temp table
-                if (transactIndicator)
-                {
-                    string commandName = line.Split(delimiter)[1];
-                    Action(commandType, line, delimiter, inMemoryDB, commandName, lineIndex, tempTable);
-                    continue;
-                }
-                
-
+                TransactionHandler(cleanedLine, inMemoryDB, tableName, tempTableName, transactIndicator, delimiter, activeIndicator);
             }
+            
         }
-        static void Action(string commandType, string line, string delimiter, Database inMemoryDB, string commandName, int lineIndex
+        static void TransactionHandler(string line, Database inMemoryDB, string tableName, string tempTableName
+                                       ,bool transactIndicator, string delimiter, bool activeIndicator)
+        {
+
+            // Locate tables
+            Table livetable = inMemoryDB.Table.Find(i => i.TableName == tableName);
+            Table tempTable = inMemoryDB.Table.Find(i => i.TableName == tempTableName);
+            
+            string commandType = line.Split(" ")[0];
+            // Update indicator if transaction has started
+            if (commandType == "BEGIN")
+            {
+                transactIndicator = true;
+                
+            }
+            // For roll back command empty object and instantiate a new object
+            if (commandType == "ROLLBACK")
+            {
+                tempTable.Row.Clear();
+                
+            }
+            if (commandType == "COMMIT")
+            {
+                MergeTables(inMemoryDB, tempTable, livetable );
+                tempTable.Row.Clear();
+                transactIndicator = false;      
+            }
+            // If its not a transaction use live table for updates and gets
+            if (!transactIndicator)
+            {
+                string commandName = line.Split(delimiter)[1];
+                Crud(commandType, line, delimiter, inMemoryDB, commandName, livetable);
+                
+            }
+            // If its a transaction use temp table
+            if (transactIndicator)
+            {
+                string commandName = line.Split(delimiter)[1];
+                Crud(commandType, line, delimiter, inMemoryDB, commandName, tempTable);
+                
+            }
+            
+
+        }
+        static void Crud(string commandType, string line, string delimiter, Database inMemoryDB, string commandName 
                            ,Table table)
         {
             switch (commandType)
                 {
                     case "SET":
                     string setCommandValue = line.Split(delimiter)[2];
-                    Setter setter = new Setter(inMemoryDB, commandName, setCommandValue, lineIndex, table);
+                    Setter setter = new Setter(inMemoryDB, commandName, setCommandValue, table);
                     break;
                     case "GET":
-                    Getter getter = new Getter(inMemoryDB, commandName, lineIndex, table);                 
+                    Getter getter = new Getter(inMemoryDB, commandName, table);                 
                     break;
                     case "DELETE":
-                    Deleter deleter = new Deleter(inMemoryDB, commandName, lineIndex, table);
+                    Deleter deleter = new Deleter(inMemoryDB, commandName, table);
                     break;
                     case "COUNT":
                     // Known as value in the test case but can re-use commandName variable as input
-                    Counter counter = new Counter(inMemoryDB, commandName, lineIndex, table);
+                    Counter counter = new Counter(inMemoryDB, commandName, table);
                     break;
                     default: Console.WriteLine("Unrecognized Command");
                     break;
                 }
 
         }
-        static void MergeTables(Database inMemoryDB,Table source, Table target, int lineIndex)
+        static void MergeTables(Database inMemoryDB,Table source, Table target)
         {
             List<Row> rowsInSource = source.Row;
             foreach(Row row in rowsInSource)
             {
-                Setter mergeTables = new Setter(inMemoryDB, row.Column, row.Value, lineIndex, target);
+                Setter mergeTables = new Setter(inMemoryDB, row.Column, row.Value, target);
             }
 
         }

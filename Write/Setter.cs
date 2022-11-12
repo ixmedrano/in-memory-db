@@ -5,7 +5,7 @@ namespace DevotedDatabase
 
     public class Setter
     {
-        public Setter(Database inMemoryDB, string column, string newValue, int lineIndex, Table table)
+        public Setter(Database inMemoryDB, string column, string newValue, Table table)
         {
             // Check if column already exists, if not create it, else update it
             if(table.Row.Find(i => i.Column == column) == null)
