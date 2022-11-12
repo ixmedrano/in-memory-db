@@ -5,7 +5,7 @@ namespace DevotedDatabase
     {
         public Deleter(Database inMemoryDB, string column, int lineIndex, Table table)
         {
-            // Check if column already exists, if not create it, else update it
+            // Check if column already exists
             if(table.Row.Find(i => i.Column == column) == null)
             {
                 return;

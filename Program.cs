@@ -39,6 +39,10 @@ namespace DevotedDatabase
                     case "DELETE":
                     Deleter deleter = new Deleter(inMemoryDB, commandName, lineIndex, table);
                     break;
+                    case "COUNT":
+                    // Known as value in the test case but can re-use commandName variable as input
+                    Counter counter = new Counter(inMemoryDB, commandName, lineIndex, table);
+                    break;
                     default: Console.WriteLine("Unrecognized Command");
                     break;
                 }
