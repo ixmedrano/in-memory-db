@@ -12,6 +12,7 @@ namespace DevotedDatabase
     {
         public string TableName {get;set;}
         public List<Row> ? Row {get;set;}   
+
     }
     public class Database
     {

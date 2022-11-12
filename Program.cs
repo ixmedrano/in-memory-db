@@ -18,14 +18,14 @@ namespace DevotedDatabase
             bool transactIndicator = false;
             // Instantiate Database Object
             Database inMemoryDB = new Instantiator(databaseName, tableName).CreateDatabase();
-            // Locate tables
-            Table livetable = inMemoryDB.Table.Find(i => i.TableName == tableName);
-            Table tempTable = inMemoryDB.Table.Find(i => i.TableName == tempTableName);
             
             var lines = File.ReadLines(incomingFilePath);
             int lineIndex = 1;
             foreach (string line in lines)
-            {                
+            {             
+                // Locate tables
+                Table livetable = inMemoryDB.Table.Find(i => i.TableName == tableName);
+                Table tempTable = inMemoryDB.Table.Find(i => i.TableName == tempTableName);   
                 lineIndex ++;
                 Console.WriteLine(line);
                 string commandType = line.Split(" ")[0];
@@ -38,16 +38,15 @@ namespace DevotedDatabase
                 // For roll back command empty object and instantiate a new object
                 if (commandType == "ROLLBACK")
                 {
-                    inMemoryDB.Table.Remove(tempTable);
-                    Table newTempTable = new Table();
-                    newTempTable.TableName = tempTableName;
-                    inMemoryDB.Table.Add(newTempTable);
-                    transactIndicator = false;
+                    tempTable.Row.Clear();
                     continue;
                 }
                 if (commandType == "COMMIT")
                 {
-                    throw new NotImplementedException();
+                    MergeTables(inMemoryDB, tempTable, livetable, lineIndex);
+                    tempTable.Row.Clear();
+                    transactIndicator = false;
+                    continue;
 
                 }
                 // If its not a transaction use live table for updates and gets
@@ -90,6 +89,15 @@ namespace DevotedDatabase
                     default: Console.WriteLine("Unrecognized Command");
                     break;
                 }
+
+        }
+        static void MergeTables(Database inMemoryDB,Table source, Table target, int lineIndex)
+        {
+            List<Row> rowsInSource = source.Row;
+            foreach(Row row in rowsInSource)
+            {
+                Setter mergeTables = new Setter(inMemoryDB, row.Column, row.Value, lineIndex, target);
+            }
 
         }
     }
