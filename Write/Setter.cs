@@ -8,16 +8,18 @@ namespace DevotedDatabase
         public Setter(Database inMemoryDB, string column, string newValue, Table table, int? transactionOverride = null)
         {
 
-            // Check if column already exists, if not create it, else update it
+            // Check if column already exists, if not create it
             if (table.Row.Find(i => i.Column == column) == null)
             {
                 CreateRow(inMemoryDB, table, column, newValue, transactionOverride ?? inMemoryDB.TransactionNumber, true);
             }
+            // If column exists but is not able to be located by transaction number, create it 
             else if (table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber) == null ||
                      !table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber).Column.Any() )
             {
                 CreateRow(inMemoryDB, table, column, newValue, transactionOverride ?? inMemoryDB.TransactionNumber, true);
             }
+            // Otherwise update column
             else
             {
                 CreateRow(inMemoryDB, table, column, newValue, transactionOverride ?? inMemoryDB.TransactionNumber, false);
@@ -27,7 +29,7 @@ namespace DevotedDatabase
 
         private void CreateRow(Database inMemoryDB, Table table, string column, string newValue, int transaction, bool newInd)
         {
-            // Check if column already exists, if not create it, else update it
+            // Creates new row record if this is a new record
             if (newInd == true)
             {
                 Row newRow = new Row();
@@ -36,6 +38,7 @@ namespace DevotedDatabase
                 newRow.Value = newValue;
                 table.Row.Add(newRow);
             }
+            // Otherwise attempts to locate using transaciton number to update
             else
             {
                 Row currentRow = table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber);
