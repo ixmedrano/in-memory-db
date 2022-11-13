@@ -5,25 +5,42 @@ namespace DevotedDatabase
 
     public class Setter
     {
-        public Setter(Database inMemoryDB, string column, string newValue, Table table)
+        public Setter(Database inMemoryDB, string column, string newValue, Table table, int? transactionOverride = null)
+        {
+
+            // Check if column already exists, if not create it, else update it
+            if (table.Row.Find(i => i.Column == column) == null)
+            {
+                CreateRow(inMemoryDB, table, column, newValue, transactionOverride ?? inMemoryDB.TransactionNumber, true);
+            }
+            else if (table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber) == null ||
+                     !table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber).Column.Any() )
+            {
+                CreateRow(inMemoryDB, table, column, newValue, transactionOverride ?? inMemoryDB.TransactionNumber, true);
+            }
+            else
+            {
+                CreateRow(inMemoryDB, table, column, newValue, transactionOverride ?? inMemoryDB.TransactionNumber, false);
+            }
+
+        }
+
+        private void CreateRow(Database inMemoryDB, Table table, string column, string newValue, int transaction, bool newInd)
         {
             // Check if column already exists, if not create it, else update it
-            if(table.Row.Find(i => i.Column == column) == null)
+            if (newInd == true)
             {
                 Row newRow = new Row();
-                newRow.RowId = Guid.NewGuid();
-                newRow.DateCreated = DateTime.Today;
-                newRow.DateUpdated = DateTime.Today;
+                newRow.TransactionId = transaction;
                 newRow.Column = column;
                 newRow.Value = newValue;
                 table.Row.Add(newRow);
             }
             else
             {
-                Row currentRow = table.Row.Find(i => i.Column == column);
+                Row currentRow = table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber);
                 currentRow.Value = newValue;
             }
-
         }
     }
 }

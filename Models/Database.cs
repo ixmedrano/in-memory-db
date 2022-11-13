@@ -2,11 +2,9 @@ namespace DevotedDatabase
 {
     public class Row
     {
-        public Guid  RowId {get;set;}
+        public int  TransactionId {get;set;}
         public string  Column {get;set;}
         public string ? Value {get;set;}
-        public DateTime  DateCreated {get;set;}
-        public DateTime  DateUpdated {get;set;}
     }
     public class Table
     {
@@ -18,6 +16,7 @@ namespace DevotedDatabase
     {
         public string DatabaseName {get;set;}
         public List<Table> ? Table {get;set;}
+        public int TransactionNumber {get;set;} = 0;
     }
 
 }

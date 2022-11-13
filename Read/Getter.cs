@@ -10,9 +10,14 @@ namespace DevotedDatabase
             {
                 Console.WriteLine("NULL");
             }
+            else if (table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber) != null)
+            {
+                Row currentRow = table.Row.Find(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber);
+                Console.WriteLine("{0}",currentRow.Value);
+            }
             else
             {
-                Row currentRow = table.Row.Find(i => i.Column == column);
+                Row currentRow = table.Row.FindLast(i => i.Column == column && i.TransactionId == inMemoryDB.TransactionNumber);
                 Console.WriteLine("{0}",currentRow.Value);
             }
         }
