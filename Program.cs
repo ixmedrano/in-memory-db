@@ -21,9 +21,9 @@ namespace DevotedDatabase
             var lines = File.ReadLines(incomingFilePath);
             foreach (string line in lines)
             {
-                string cleanedLine = line.ToUpper();
+                
                 bool transactionIndicator = false;
-                TransactionHandler(cleanedLine, inMemoryDB, tableName, tempTableName, delimiter, transactionIndicator);
+                TransactionHandler(line, inMemoryDB, tableName, tempTableName, delimiter, transactionIndicator);
             }
 /*
             while (activeIndicator)
@@ -48,7 +48,7 @@ namespace DevotedDatabase
             Table livetable = inMemoryDB.Table.Find(i => i.TableName == tableName);
             Table tempTable = inMemoryDB.Table.Find(i => i.TableName == tempTableName);
             // Local Variables
-            string commandType = line.Split(" ")[0];
+            string commandType = line.Split(" ")[0].ToUpper();
             // Update indicator if transaction has started
             if (commandType == "BEGIN")
             {
@@ -84,14 +84,17 @@ namespace DevotedDatabase
             }
             if (commandType == "COMMIT")
             {
-                //TODO: Fix Enumeration issue
                 inMemoryDB.TransactionNumber --;
+                if(inMemoryDB.TransactionNumber == 0)
+                {
+                    MergeTables(inMemoryDB, tempTable, livetable);
+                    tempTable.Row.Clear();
+                }
+                
                 foreach(Row row in tempTable.Row)
                 {
                     Setter setter = new Setter(inMemoryDB, row.Column, row.Value, tempTable);
-                }
-                
-                
+                }               
                 Console.WriteLine("Transaction Completed");
                 return;
             }
@@ -121,14 +124,16 @@ namespace DevotedDatabase
                     Console.WriteLine("Setting {0} to {1}", commandName, setCommandValue);
                     break;
                 case "GET":
+                    Console.WriteLine("Getting {0}", commandName);
                     Getter getter = new Getter(inMemoryDB, commandName, table);
                     break;
                 case "DELETE":
-                    Deleter deleter = new Deleter(inMemoryDB, commandName, table);
                     Console.WriteLine("Deleting {0}", commandName);
+                    Deleter deleter = new Deleter(inMemoryDB, commandName, table);
                     break;
                 case "COUNT":
                     // Known as value in the test case but can re-use commandName variable as input
+                    Console.WriteLine("Counting {0}", commandName);
                     Counter counter = new Counter(inMemoryDB, commandName, table);
                     break;
                 default:
