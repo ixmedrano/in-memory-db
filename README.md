@@ -1,8 +1,6 @@
 # in-memory-db
 in memory database assignment
 
-This project was created for Devoted Health as a part of the technical assesment.
-
 # Overview of technology used
 This is a console application written in C# for .NET 7. There are no third party libraries, all of the functionality exists within the standard .NET deployment from Microsoft.
 
